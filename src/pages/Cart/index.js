@@ -1,7 +1,11 @@
-import React, { Component } from 'react';
+import React from 'react';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import PropTypes from 'prop-types';
 
 import { formatPrice } from '../../util/format';
+import * as CartActions from '../../store/modules/cart/actions';
 
 import {
   Container,
@@ -15,9 +19,8 @@ import {
   DeleteFromCart,
   SubtotalContainer,
   AmountContainer,
-  AddOne,
+  ChangeAmount,
   AmountText,
-  RemoveOne,
   SubtotalPrice,
   PlaceOrderContainer,
   TotalTitle,
@@ -28,125 +31,84 @@ import {
 
 Icon.loadFont();
 
-export default class Cart extends Component {
-  state = {
-    cart: [
-      {
-        id: 1,
-        image:
-          'https://rocketseat-cdn.s3-sa-east-1.amazonaws.com/modulo-redux/tenis2.jpg',
-        title: 'Tênis de Caminhada Leve Confortável',
-        price: formatPrice(179.9),
-        amount: 3,
-      },
-      {
-        id: 2,
-        image:
-          'https://rocketseat-cdn.s3-sa-east-1.amazonaws.com/modulo-redux/tenis2.jpg',
-        title: 'Tênis de Caminhada Leve Confortável',
-        price: formatPrice(179.9),
-        amount: 3,
-      },
-      {
-        id: 3,
-        image:
-          'https://rocketseat-cdn.s3-sa-east-1.amazonaws.com/modulo-redux/tenis2.jpg',
-        title: 'Tênis de Caminhada Leve Confortável',
-        price: formatPrice(179.9),
-        amount: 3,
-      },
-      {
-        id: 4,
-        image:
-          'https://rocketseat-cdn.s3-sa-east-1.amazonaws.com/modulo-redux/tenis2.jpg',
-        title: 'Tênis de Caminhada Leve Confortável',
-        price: formatPrice(179.9),
-        amount: 3,
-      },
-      {
-        id: 5,
-        image:
-          'https://rocketseat-cdn.s3-sa-east-1.amazonaws.com/modulo-redux/tenis2.jpg',
-        title: 'Tênis de Caminhada Leve Confortável',
-        price: formatPrice(179.9),
-        amount: 3,
-      },
-      {
-        id: 6,
-        image:
-          'https://rocketseat-cdn.s3-sa-east-1.amazonaws.com/modulo-redux/tenis2.jpg',
-        title: 'Tênis de Caminhada Leve Confortável',
-        price: formatPrice(179.9),
-        amount: 3,
-      },
-      {
-        id: 7,
-        image:
-          'https://rocketseat-cdn.s3-sa-east-1.amazonaws.com/modulo-redux/tenis2.jpg',
-        title: 'Tênis de Caminhada Leve Confortável',
-        price: formatPrice(179.9),
-        amount: 3,
-      },
-      {
-        id: 8,
-        image:
-          'https://rocketseat-cdn.s3-sa-east-1.amazonaws.com/modulo-redux/tenis2.jpg',
-        title: 'Tênis de Caminhada Leve Confortável',
-        price: formatPrice(179.9),
-        amount: 3,
-      },
-    ],
-  };
-
-  render() {
-    const { cart } = this.state;
-
-    return (
-      <Container>
-        <CartList
-          data={cart}
-          ListFooterComponent={() => (
-            <PlaceOrderContainer>
-              <TotalTitle>Total</TotalTitle>
-              <TotalPriceText>R$3230,00</TotalPriceText>
-              <PlaceOrderButton>
-                <PlaceOrderText>FINALIZAR PEDIDO</PlaceOrderText>
-              </PlaceOrderButton>
-            </PlaceOrderContainer>
-          )}
-          keyExtractor={item => String(item.id)}
-          renderItem={({ item }) => (
-            <CartItemContainer>
-              <ProductInfoContainer>
-                <ProductImage source={{ uri: item.image }} />
-                <ProductInfoTextContainer>
-                  <ProductTitle>{item.title}</ProductTitle>
-                  <ProductPrice>{item.price}</ProductPrice>
-                </ProductInfoTextContainer>
-                <DeleteFromCart>
-                  <Icon name="delete-forever" size={24} color="#7159c1" />
-                </DeleteFromCart>
-              </ProductInfoContainer>
-              <SubtotalContainer>
-                <AmountContainer>
-                  <AddOne>
-                    <Icon
-                      name="remove-circle-outline"
-                      size={20}
-                      color="#7159c1"
-                    />
-                  </AddOne>
-                  <AmountText>{item.amount}</AmountText>
-                  <RemoveOne>
-                    <Icon name="add-circle-outline" size={20} color="#7159c1" />
-                  </RemoveOne>
-                </AmountContainer>
-                <SubtotalPrice>R$500,00</SubtotalPrice>
-              </SubtotalContainer>
-            </CartItemContainer>
-          )}
-        />
-      </Container>
-    );
+function Cart({ cart, total, removeFromCart, updateAmountRequest }) {
+  function increment(product) {
+    updateAmountRequest(product.id, product.amount + 1);
   }
+
+  function decrement(product) {
+    updateAmountRequest(product.id, product.amount - 1);
+  }
+
+  return (
+    <Container>
+      <CartList
+        data={cart}
+        ListFooterComponent={() => (
+          <PlaceOrderContainer>
+            <TotalTitle>Total</TotalTitle>
+            <TotalPriceText>{total}</TotalPriceText>
+            <PlaceOrderButton>
+              <PlaceOrderText>FINALIZAR PEDIDO</PlaceOrderText>
+            </PlaceOrderButton>
+          </PlaceOrderContainer>
+        )}
+        keyExtractor={item => String(item.id)}
+        renderItem={({ item }) => (
+          <CartItemContainer>
+            <ProductInfoContainer>
+              <ProductImage source={{ uri: item.image }} />
+              <ProductInfoTextContainer>
+                <ProductTitle>{item.title}</ProductTitle>
+                <ProductPrice>{item.price}</ProductPrice>
+              </ProductInfoTextContainer>
+              <DeleteFromCart onPress={() => removeFromCart(item.id)}>
+                <Icon name="delete-forever" size={24} color="#7159c1" />
+              </DeleteFromCart>
+            </ProductInfoContainer>
+            <SubtotalContainer>
+              <AmountContainer>
+                <ChangeAmount onPress={() => decrement(item)}>
+                  <Icon
+                    name="remove-circle-outline"
+                    size={20}
+                    color="#7159c1"
+                  />
+                </ChangeAmount>
+                <AmountText>{item.amount}</AmountText>
+                <ChangeAmount onPress={() => increment(item)}>
+                  <Icon name="add-circle-outline" size={20} color="#7159c1" />
+                </ChangeAmount>
+              </AmountContainer>
+              <SubtotalPrice>{item.subtotal}</SubtotalPrice>
+            </SubtotalContainer>
+          </CartItemContainer>
+        )}
+      />
+    </Container>
+  );
 }
+
+Cart.propTypes = {
+  cart: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+  total: PropTypes.string.isRequired,
+  removeFromCart: PropTypes.func.isRequired,
+  updateAmountRequest: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = state => ({
+  cart: state.cart.map(product => ({
+    ...product,
+    subtotal: formatPrice(product.price * product.amount),
+  })),
+  total: formatPrice(
+    state.cart.reduce((total, product) => {
+      return total + product.price * product.amount;
+    }, 0)
+  ),
+});
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(CartActions, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(Cart);

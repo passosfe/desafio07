@@ -62,7 +62,7 @@ export const AmountContainer = styled.View`
   align-items: center;
 `;
 
-export const AddOne = styled.TouchableOpacity`
+export const ChangeAmount = styled.TouchableOpacity`
   height: 20px;
   width: 20px;
   margin: 5px;
@@ -76,12 +76,6 @@ export const AmountText = styled.TextInput`
   height: 26px;
   width: 51px;
   text-align: center;
-`;
-
-export const RemoveOne = styled.TouchableOpacity`
-  height: 20px;
-  width: 20px;
-  margin: 5px;
 `;
 
 export const SubtotalPrice = styled.Text`
