@@ -27,6 +27,8 @@ import {
   TotalPriceText,
   PlaceOrderButton,
   PlaceOrderText,
+  EmptyCartContainer,
+  EmptyCartText,
 } from './styles';
 
 Icon.loadFont();
@@ -42,49 +44,56 @@ function Cart({ cart, total, removeFromCart, updateAmountRequest }) {
 
   return (
     <Container>
-      <CartList
-        data={cart}
-        ListFooterComponent={() => (
-          <PlaceOrderContainer>
-            <TotalTitle>Total</TotalTitle>
-            <TotalPriceText>{total}</TotalPriceText>
-            <PlaceOrderButton>
-              <PlaceOrderText>FINALIZAR PEDIDO</PlaceOrderText>
-            </PlaceOrderButton>
-          </PlaceOrderContainer>
-        )}
-        keyExtractor={item => String(item.id)}
-        renderItem={({ item }) => (
-          <CartItemContainer>
-            <ProductInfoContainer>
-              <ProductImage source={{ uri: item.image }} />
-              <ProductInfoTextContainer>
-                <ProductTitle>{item.title}</ProductTitle>
-                <ProductPrice>{item.price}</ProductPrice>
-              </ProductInfoTextContainer>
-              <DeleteFromCart onPress={() => removeFromCart(item.id)}>
-                <Icon name="delete-forever" size={24} color="#7159c1" />
-              </DeleteFromCart>
-            </ProductInfoContainer>
-            <SubtotalContainer>
-              <AmountContainer>
-                <ChangeAmount onPress={() => decrement(item)}>
-                  <Icon
-                    name="remove-circle-outline"
-                    size={20}
-                    color="#7159c1"
-                  />
-                </ChangeAmount>
-                <AmountText>{item.amount}</AmountText>
-                <ChangeAmount onPress={() => increment(item)}>
-                  <Icon name="add-circle-outline" size={20} color="#7159c1" />
-                </ChangeAmount>
-              </AmountContainer>
-              <SubtotalPrice>{item.subtotal}</SubtotalPrice>
-            </SubtotalContainer>
-          </CartItemContainer>
-        )}
-      />
+      {cart.length > 0 ? (
+        <CartList
+          data={cart}
+          ListFooterComponent={() => (
+            <PlaceOrderContainer>
+              <TotalTitle>Total</TotalTitle>
+              <TotalPriceText>{total}</TotalPriceText>
+              <PlaceOrderButton>
+                <PlaceOrderText>FINALIZAR PEDIDO</PlaceOrderText>
+              </PlaceOrderButton>
+            </PlaceOrderContainer>
+          )}
+          keyExtractor={item => String(item.id)}
+          renderItem={({ item }) => (
+            <CartItemContainer>
+              <ProductInfoContainer>
+                <ProductImage source={{ uri: item.image }} />
+                <ProductInfoTextContainer>
+                  <ProductTitle>{item.title}</ProductTitle>
+                  <ProductPrice>{item.price}</ProductPrice>
+                </ProductInfoTextContainer>
+                <DeleteFromCart onPress={() => removeFromCart(item.id)}>
+                  <Icon name="delete-forever" size={24} color="#7159c1" />
+                </DeleteFromCart>
+              </ProductInfoContainer>
+              <SubtotalContainer>
+                <AmountContainer>
+                  <ChangeAmount onPress={() => decrement(item)}>
+                    <Icon
+                      name="remove-circle-outline"
+                      size={20}
+                      color="#7159c1"
+                    />
+                  </ChangeAmount>
+                  <AmountText>{item.amount}</AmountText>
+                  <ChangeAmount onPress={() => increment(item)}>
+                    <Icon name="add-circle-outline" size={20} color="#7159c1" />
+                  </ChangeAmount>
+                </AmountContainer>
+                <SubtotalPrice>{item.subtotal}</SubtotalPrice>
+              </SubtotalContainer>
+            </CartItemContainer>
+          )}
+        />
+      ) : (
+        <EmptyCartContainer>
+          <Icon name="remove-shopping-cart" size={64} color="#ccc" />
+          <EmptyCartText>SEU CARRINHO ESTÁ VAZIO</EmptyCartText>
+        </EmptyCartContainer>
+      )}
     </Container>
   );
 }

@@ -117,3 +117,16 @@ export const PlaceOrderText = styled.Text`
   color: #fff;
   font-weight: bold;
 `;
+
+export const EmptyCartContainer = styled.View`
+  padding: 30px;
+  border-radius: 4px;
+  background: #fff;
+  align-items: center;
+`;
+
+export const EmptyCartText = styled.Text`
+  margin-top: 20px;
+  font-weight: bold;
+  font-size: 20;
+`;
